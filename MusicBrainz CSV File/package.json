@@ -1,0 +1,15 @@
+{
+  "name": "musicbrainz-csv-file",
+  "version": "1.0.0",
+  "description": "Use the MusicBrainz API to create a CSV file listing the albums from a particular artist.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8"
+  }
+}
