@@ -61,3 +61,12 @@ async function main(artistName) {
     fs.writeFileSync('albums.csv', csvData);
     console.log('CSV file created successfully.');
 }
+
+// Command line arguments handling
+
+const artistName = process.argv[2];
+if (!artistName) {
+    console.error('Please provide the artist name as an argument.');
+} else {
+    main(artistName);
+}
