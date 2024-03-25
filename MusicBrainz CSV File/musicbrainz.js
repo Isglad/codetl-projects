@@ -32,3 +32,18 @@ async function listAlbums(artistId) {
         return [];
     }
 }
+
+// Function to construct CSV data from album information
+
+function constructCSV(albums) {
+    let csvData = "Artist,Country,Title,Date,Status\n";
+    albums.forEach(album => {
+        const artist = album['artist-credit'][0].artist.name;
+        const country = album.country || 'Unknown';
+        const title = album.title || 'Unknown';
+        const date = album.date || 'Unknown';
+        const status = album.status || 'Unknown';
+        csvData += `"${artist}","${country}","${title}","${date}","${status}"\n`;
+    });
+    return csvData;
+}
