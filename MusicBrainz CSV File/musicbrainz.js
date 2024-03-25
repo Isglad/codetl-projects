@@ -47,3 +47,17 @@ function constructCSV(albums) {
     });
     return csvData;
 }
+
+// Main function to orchestrate the process
+
+async function main(artistName) {
+    const artist = await searchArtist(artistName);
+    if (!artist) {
+        console.log('Artist not found.');
+        return;
+    }
+    const albums = await listAlbums(artist.id);
+    const csvData = constructCSV(albums);
+    fs.writeFileSync('albums.csv', csvData);
+    console.log('CSV file created successfully.');
+}
