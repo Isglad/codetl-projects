@@ -1,7 +1,7 @@
 const axios = require('axios');
 const fs = require('fs');
 
-// Function to search for an artist using the MusicBrainz API
+// Function to search for the artist you are interested using the `artist` API.
 
 async function searchArtist(artistName){
     try {
@@ -17,5 +17,18 @@ async function searchArtist(artistName){
     } catch(error) {
         console.error('Error searching for the artist:', error);
         return null;
+    }
+}
+
+// Function to list all albums of a given artist using the `release` API.
+
+async function listAlbums(artistId) {
+    try {
+        const response = await axios.get(`http://musicbrainz.org/ws/2/release/?artist=${artistId}&fmt=json`);
+        console.log('Response from release API:', response.data.releases);
+        return response.data.releases;
+    } catch (error) {
+        console.error('Error listing albums:', error);
+        return [];
     }
 }
