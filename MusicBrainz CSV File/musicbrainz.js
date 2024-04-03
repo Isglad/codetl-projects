@@ -6,9 +6,7 @@ const fs = require('fs');
 async function searchArtist(artistName){
     try {
         const response = await axios.get(`http://musicbrainz.org/ws/2/artist/?query=${artistName}&fmt=json`);
-        // console.log('Response from MusicBrainz API:', response.data);
         if (response.data.artists && response.data.artists.length > 0) {
-            console.log(artistName + " is an artist!");
             return response.data.artists[0]; // Assuming the first artist in the response is the intended one
         } else {
             console.log('Artist not found.');
@@ -25,7 +23,6 @@ async function searchArtist(artistName){
 async function listAlbums(artistId) {
     try {
         const response = await axios.get(`http://musicbrainz.org/ws/2/release/?artist=${artistId}&fmt=json`);
-        console.log('Response from release API:', response.data.releases);
         return response.data.releases;
     } catch (error) {
         console.error('Error listing albums:', error);
@@ -35,10 +32,10 @@ async function listAlbums(artistId) {
 
 // Function to construct CSV data from album information
 
-function constructCSV(albums) {
+function constructCSV(albums, artistName) {
     let csvData = "Artist,Country,Title,Date,Status\n";
     albums.forEach(album => {
-        const artist = album['artist-credit'][0].artist.name;
+        const artist = getArtistName(album, artistName);
         const country = album.country || 'Unknown';
         const title = album.title || 'Unknown';
         const date = album.date || 'Unknown';
@@ -46,6 +43,25 @@ function constructCSV(albums) {
         csvData += `"${artist}","${country}","${title}","${date}","${status}"\n`;
     });
     return csvData;
+}
+
+// Function to get artist name from album information
+
+function getArtistName(album, artistName) {
+    let artist = 'Unknown';
+
+    // Extract the artist name from the album information
+    if (album['artist-credit'] && album['artist-credit'][0] && album['artist-credit'][0].artist) {
+        artist = album['artist-credit'][0].artist.name;
+    }
+
+    // If the artist name from the album information matches the provided artistName, use it
+    if (artist.toLowerCase() === artistName.toLowerCase()) {
+        return artist;
+    }
+
+    // If not, use the provided artistName
+    return artistName;
 }
 
 // Main function to orchestrate the process
@@ -57,7 +73,7 @@ async function main(artistName) {
         return;
     }
     const albums = await listAlbums(artist.id);
-    const csvData = constructCSV(albums);
+    const csvData = constructCSV(albums, artistName); // Pass artistName here
     fs.writeFileSync('albums.csv', csvData);
     console.log('CSV file created successfully.');
 }
